@@ -1,16 +1,16 @@
 <script>
 import { mapStores, mapWritableState } from "pinia"
 import useModalStore from "@/stores/modal"
+import useUserStore from "@/stores/user"
 export default {
     name: "AppHeader",
     computed: {
-        ...mapStores(useModalStore),
+        ...mapStores(useModalStore, useUserStore),
         ...mapWritableState(useModalStore, ["isOpen"])
     },
     methods: {
         toggleAuthModal() {
             this.isOpen = !this.isOpen;
-            console.log(this.isOpen)
         }
     }
 }
@@ -26,12 +26,17 @@ export default {
                 <!-- Primary Navigation -->
                 <ul class="flex flex-row mt-1">
                     <!-- Navigation Links -->
-                    <li>
+                    <li v-if="!userStore.userLoggedIn">
                         <a class="px-2 text-white" href="#" @click.prevent="toggleAuthModal">Login / Register</a>
                     </li>
-                    <li>
-                        <a class="px-2 text-white" href="#">Manage</a>
-                    </li>
+                    <template v-else>
+                        <li>
+                            <a class="px-2 text-white" href="#">Manage</a>
+                        </li>
+                        <li>
+                            <a class="px-2 text-white" href="#" @click.prevent="userStore.signOut">Logout</a>
+                        </li>
+                    </template>
                 </ul>
             </div>
         </nav>
